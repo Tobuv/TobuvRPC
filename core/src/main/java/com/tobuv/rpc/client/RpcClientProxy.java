@@ -1,7 +1,6 @@
 package com.tobuv.rpc.client;
 
 import com.tobuv.rpc.entity.RpcRequest;
-import com.tobuv.rpc.entity.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
