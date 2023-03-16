@@ -9,6 +9,7 @@ import com.tobuv.rpc.exception.RpcException;
 import com.tobuv.rpc.serializer.CommonSerializer;
 import com.tobuv.rpc.socket.util.ObjectReader;
 import com.tobuv.rpc.socket.util.ObjectWriter;
+import com.tobuv.rpc.util.RpcMessageChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,8 @@ public class SocketClient implements RpcClient {
                 logger.error("调用服务失败, service: {}, response:{}", rpcRequest.getInterfaceName(), rpcResponse);
                 throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, " service:" + rpcRequest.getInterfaceName());
             }
+            //检查请求号是否一致
+            RpcMessageChecker.check(rpcRequest, rpcResponse);
             return rpcResponse.getData();
         } catch (IOException e) {
             logger.error("调用时有错误发生：", e);

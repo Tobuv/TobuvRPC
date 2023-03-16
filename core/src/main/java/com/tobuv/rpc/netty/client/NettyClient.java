@@ -11,6 +11,7 @@ import com.tobuv.rpc.serializer.CommonSerializer;
 import com.tobuv.rpc.serializer.HessianSerializer;
 import com.tobuv.rpc.serializer.JsonSerializer;
 import com.tobuv.rpc.serializer.KryoSerializer;
+import com.tobuv.rpc.util.RpcMessageChecker;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -73,8 +74,10 @@ public class NettyClient implements RpcClient {
                     }
                 });
                 channel.closeFuture().sync();
-                AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
+                AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse" + rpcRequest.getRequestId());
                 RpcResponse rpcResponse = channel.attr(key).get();
+                //检查请求号是否一致
+                RpcMessageChecker.check(rpcRequest, rpcResponse);
                 //优雅的关闭
                 bootstrap.group().shutdownGracefully();
                 return rpcResponse.getData();
