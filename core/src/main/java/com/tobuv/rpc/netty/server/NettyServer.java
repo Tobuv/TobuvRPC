@@ -5,8 +5,6 @@ import com.tobuv.rpc.RpcServer;
 import com.tobuv.rpc.codec.CommonDecoder;
 import com.tobuv.rpc.codec.CommonEncoder;
 import com.tobuv.rpc.serializer.HessianSerializer;
-import com.tobuv.rpc.serializer.JsonSerializer;
-import com.tobuv.rpc.serializer.KryoSerializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -19,7 +17,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * NIO方式服务提供侧
- * @author ziyang
+ *
+ *
  */
 public class NettyServer implements RpcServer {
 

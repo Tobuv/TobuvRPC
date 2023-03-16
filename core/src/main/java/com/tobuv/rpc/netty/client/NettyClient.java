@@ -57,9 +57,9 @@ public class NettyClient implements RpcClient {
             ChannelFuture future = bootstrap.connect(host, port).sync();
             logger.info("客户端连接到服务器 {}:{}", host, port);
             Channel channel = future.channel();
-            if(channel != null) {
+            if (channel != null) {
                 channel.writeAndFlush(rpcRequest).addListener(future1 -> {
-                    if(future1.isSuccess()) {
+                    if (future1.isSuccess()) {
                         logger.info(String.format("客户端发送消息: %s", rpcRequest.toString()));
                     } else {
                         logger.error("发送消息时有错误发生: ", future1.cause());
