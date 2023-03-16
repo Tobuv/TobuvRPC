@@ -5,6 +5,7 @@ import com.tobuv.rpc.netty.server.NettyServer;
 import com.tobuv.rpc.registry.DefaultServiceRegistry;
 import com.tobuv.rpc.registry.ServiceRegistry;
 import com.tobuv.rpc.serializer.HessianSerializer;
+import com.tobuv.rpc.serializer.ProtobufSerializer;
 
 /**
  * 测试：服务提供者
@@ -16,7 +17,7 @@ public class NettyTestServer {
         ServiceRegistry registry = new DefaultServiceRegistry();
         registry.register(helloService);
         NettyServer nettyServer = new NettyServer();
-        nettyServer.setSerializer(new HessianSerializer());
+        nettyServer.setSerializer(new ProtobufSerializer());
         nettyServer.start(9999);
     }
 

@@ -2,6 +2,7 @@ package com.tobuv.rpc.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class RpcRequest implements Serializable {
     /**
      * 请求号
@@ -37,6 +39,4 @@ public class RpcRequest implements Serializable {
      */
     private Class<?>[] paramTypes;
 
-    public RpcRequest() {
-    }
 }

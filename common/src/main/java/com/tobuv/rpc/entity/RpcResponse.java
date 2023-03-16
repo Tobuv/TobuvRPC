@@ -2,6 +2,7 @@ package com.tobuv.rpc.entity;
 
 import com.tobuv.rpc.enumeration.ResponseCode;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @param <T>
  */
 @Data
+@NoArgsConstructor
 public class RpcResponse<T> implements Serializable {
     /**
      * 响应对应的请求号
@@ -47,6 +49,4 @@ public class RpcResponse<T> implements Serializable {
         return response;
     }
 
-    public RpcResponse() {
-    }
 }
