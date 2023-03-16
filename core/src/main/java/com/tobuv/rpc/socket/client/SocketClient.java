@@ -6,12 +6,13 @@ import com.tobuv.rpc.entity.RpcResponse;
 import com.tobuv.rpc.enumeration.ResponseCode;
 import com.tobuv.rpc.enumeration.RpcError;
 import com.tobuv.rpc.exception.RpcException;
+import com.tobuv.rpc.serializer.CommonSerializer;
+import com.tobuv.rpc.socket.util.ObjectReader;
+import com.tobuv.rpc.socket.util.ObjectWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -20,6 +21,7 @@ import java.net.Socket;
 public class SocketClient implements RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketClient.class);
+    private CommonSerializer serializer;
 
     private final String host;
     private final int port;
@@ -31,13 +33,16 @@ public class SocketClient implements RpcClient {
 
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
+        if(serializer == null) {
+            logger.error("未设置序列化器");
+            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
+        }
         try (Socket socket = new Socket(host, port)) {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-            objectOutputStream.writeObject(rpcRequest);
-            objectOutputStream.flush();
-            //return objectInputStream.readObject();
-            RpcResponse rpcResponse = (RpcResponse) objectInputStream.readObject();
+            OutputStream outputStream = socket.getOutputStream();
+            InputStream inputStream = socket.getInputStream();
+            ObjectWriter.writeObject(outputStream, rpcRequest, serializer);
+            Object obj = ObjectReader.readObject(inputStream);
+            RpcResponse rpcResponse = (RpcResponse) obj;
             if(rpcResponse == null) {
                 logger.error("服务调用失败，service：{}", rpcRequest.getInterfaceName());
                 throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, " service:" + rpcRequest.getInterfaceName());
@@ -47,11 +52,15 @@ public class SocketClient implements RpcClient {
                 throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, " service:" + rpcRequest.getInterfaceName());
             }
             return rpcResponse.getData();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             logger.error("调用时有错误发生：", e);
             //return null;
             throw new RpcException("服务调用失败: ", e);
         }
+    }
+    @Override
+    public void setSerializer(CommonSerializer serializer) {
+        this.serializer = serializer;
     }
 
 }
