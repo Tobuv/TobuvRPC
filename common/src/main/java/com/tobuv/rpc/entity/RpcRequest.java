@@ -1,12 +1,18 @@
 package com.tobuv.rpc.entity;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * 请求消息体
+ */
+
 @Data
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RpcRequest implements Serializable {
 
     /**

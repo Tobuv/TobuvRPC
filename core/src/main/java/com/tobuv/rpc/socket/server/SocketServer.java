@@ -1,6 +1,9 @@
-package com.tobuv.rpc.server;
+package com.tobuv.rpc.socket.server;
 
+import com.tobuv.rpc.RpcServer;
 import com.tobuv.rpc.registry.ServiceRegistry;
+import com.tobuv.rpc.RequestHandler;
+import com.tobuv.rpc.server.RequestHandlerThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,9 +15,9 @@ import java.util.concurrent.*;
 /**
  * 远程方法调用的提供者（服务端）
  */
-public class RpcServer {
+public class SocketServer implements RpcServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(RpcServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
 
     private static final int CORE_POOL_SIZE = 5;
     private static final int MAXIMUM_POOL_SIZE = 50;
@@ -24,7 +27,7 @@ public class RpcServer {
     private RequestHandler requestHandler = new RequestHandler();
     private final ServiceRegistry serviceRegistry;
 
-    public RpcServer(ServiceRegistry serviceRegistry) {
+    public SocketServer(ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
         BlockingQueue<Runnable> workingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY);
         ThreadFactory threadFactory = Executors.defaultThreadFactory();

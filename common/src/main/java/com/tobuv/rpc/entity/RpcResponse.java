@@ -2,10 +2,16 @@ package com.tobuv.rpc.entity;
 
 import com.tobuv.rpc.enumeration.ResponseCode;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * 响应消息体
+ * @param <T>
+ */
 @Data
+@NoArgsConstructor
 public class RpcResponse<T> implements Serializable {
 
     /**
