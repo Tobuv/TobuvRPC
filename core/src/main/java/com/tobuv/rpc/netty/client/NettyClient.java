@@ -5,6 +5,7 @@ import com.tobuv.rpc.codec.CommonDecoder;
 import com.tobuv.rpc.codec.CommonEncoder;
 import com.tobuv.rpc.entity.RpcRequest;
 import com.tobuv.rpc.entity.RpcResponse;
+import com.tobuv.rpc.serializer.HessianSerializer;
 import com.tobuv.rpc.serializer.JsonSerializer;
 import com.tobuv.rpc.serializer.KryoSerializer;
 import io.netty.bootstrap.Bootstrap;
