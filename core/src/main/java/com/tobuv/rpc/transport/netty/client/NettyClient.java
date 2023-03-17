@@ -1,6 +1,8 @@
 package com.tobuv.rpc.transport.netty.client;
 
+import com.tobuv.rpc.registry.NacosServiceDiscovery;
 import com.tobuv.rpc.registry.NacosServiceRegistry;
+import com.tobuv.rpc.registry.ServiceDiscovery;
 import com.tobuv.rpc.registry.ServiceRegistry;
 import com.tobuv.rpc.transport.RpcClient;
 import com.tobuv.rpc.entity.RpcRequest;
@@ -29,10 +31,10 @@ public class NettyClient implements RpcClient {
 
     private static final Bootstrap bootstrap;
     private CommonSerializer serializer;
-    private final ServiceRegistry serviceRegistry;
+    private final ServiceDiscovery serviceDiscovery;
 
     public NettyClient() {
-        this.serviceRegistry = new NacosServiceRegistry();
+        this.serviceDiscovery = new NacosServiceDiscovery();
     }
 
     static {
@@ -51,7 +53,7 @@ public class NettyClient implements RpcClient {
         }
         AtomicReference<Object> result = new AtomicReference<>(null);
         try {
-            InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+            InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
             Channel channel = ChannelProvider.get(inetSocketAddress, serializer);
             if (channel.isActive()) {
                 channel.writeAndFlush(rpcRequest).addListener(future1 -> {
@@ -71,6 +73,7 @@ public class NettyClient implements RpcClient {
                 ChannelProvider.eventLoopGroup.shutdownGracefully();
 
             } else {
+                channel.close();
                 System.exit(0);
             }
 
