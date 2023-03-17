@@ -83,8 +83,8 @@ public class NettyServer implements RpcServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS));
-                            pipeline.addLast(new CommonEncoder(serializer));
                             pipeline.addLast(new CommonDecoder());
+                            pipeline.addLast(new CommonEncoder(serializer));
                             pipeline.addLast(new NettyServerHandler());
                         }
                     });

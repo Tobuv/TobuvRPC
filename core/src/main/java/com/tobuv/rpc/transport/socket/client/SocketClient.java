@@ -63,7 +63,7 @@ public class SocketClient implements RpcClient {
             }
             //检查请求号是否一致
             RpcMessageChecker.check(rpcRequest, rpcResponse);
-            return rpcResponse.getData();
+            return rpcResponse;
         } catch (IOException e) {
             logger.error("调用时有错误发生：", e);
             //return null;

@@ -3,7 +3,6 @@ package com.tobuv.rpc.transport.socket.server;
 import com.tobuv.rpc.handler.RequestHandler;
 import com.tobuv.rpc.entity.RpcRequest;
 import com.tobuv.rpc.entity.RpcResponse;
-import com.tobuv.rpc.registry.ServiceRegistry;
 import com.tobuv.rpc.serializer.CommonSerializer;
 import com.tobuv.rpc.transport.socket.util.ObjectReader;
 import com.tobuv.rpc.transport.socket.util.ObjectWriter;
