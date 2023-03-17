@@ -1,5 +1,6 @@
 package com.tobuv.test;
 
+import com.tobuv.rpc.serializer.CommonSerializer;
 import com.tobuv.rpc.transport.RpcClientProxy;
 import com.tobuv.rpc.api.HelloObject;
 import com.tobuv.rpc.api.HelloService;
@@ -13,8 +14,7 @@ import com.tobuv.rpc.serializer.ProtobufSerializer;
 public class NettyTestClient {
 
     public static void main(String[] args) {
-        NettyClient nettyClient = new NettyClient();
-        nettyClient.setSerializer(new ProtobufSerializer());
+        NettyClient nettyClient = new NettyClient(CommonSerializer.PROTOBUF_SERIALIZER);
         RpcClientProxy proxy = new RpcClientProxy(nettyClient);
         HelloService helloService = proxy.getProxy(HelloService.class);
         HelloObject object = new HelloObject(12, "This is a message");

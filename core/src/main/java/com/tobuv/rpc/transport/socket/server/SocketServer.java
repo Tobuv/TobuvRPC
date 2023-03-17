@@ -26,8 +26,8 @@ import java.util.concurrent.*;
 public class SocketServer implements RpcServer {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
-    private RequestHandler requestHandler = new RequestHandler();
-    private CommonSerializer serializer;
+    private final RequestHandler requestHandler = new RequestHandler();
+    private final CommonSerializer serializer;
     private final ExecutorService threadPool;;
     private final String host;
     private final int port;
@@ -35,11 +35,16 @@ public class SocketServer implements RpcServer {
     private final ServiceProvider serviceProvider;
 
     public SocketServer(String host, int port) {
+        this(host, port, DEFAULT_SERIALIZER);
+    }
+
+    public SocketServer(String host, int port, Integer serializer) {
         this.host = host;
         this.port = port;
         threadPool = ThreadPoolFactory.createDefaultThreadPool("socket-rpc-server");
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
+        this.serializer = CommonSerializer.getByCode(serializer);
     }
 
     public <T> void publishService(T service, Class<T> serviceClass) {
@@ -67,9 +72,5 @@ public class SocketServer implements RpcServer {
         } catch (IOException e) {
             logger.error("服务器启动时有错误发生:", e);
         }
-    }
-    @Override
-    public void setSerializer(CommonSerializer serializer) {
-        this.serializer = serializer;
     }
 }
