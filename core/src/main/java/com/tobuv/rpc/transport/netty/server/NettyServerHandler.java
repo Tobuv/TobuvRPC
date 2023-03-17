@@ -1,9 +1,10 @@
 package com.tobuv.rpc.transport.netty.server;
 
+import com.tobuv.rpc.factory.SingletonFactory;
 import com.tobuv.rpc.handler.RequestHandler;
 import com.tobuv.rpc.entity.RpcRequest;
 import com.tobuv.rpc.entity.RpcResponse;
-import com.tobuv.rpc.util.ThreadPoolFactory;
+import com.tobuv.rpc.factory.ThreadPoolFactory;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,13 +21,13 @@ import java.util.concurrent.ExecutorService;
 public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
-    private static RequestHandler requestHandler;
     private static final String THREAD_NAME_PREFIX = "netty-server-handler";
-    private static final ExecutorService threadPool;
+    private final ExecutorService threadPool;
+    private final RequestHandler requestHandler;
 
-    static {
-        requestHandler = new RequestHandler();
-        threadPool = ThreadPoolFactory.createDefaultThreadPool(THREAD_NAME_PREFIX);
+    public NettyServerHandler() {
+        this.requestHandler = SingletonFactory.getInstance(RequestHandler.class);
+        this.threadPool = ThreadPoolFactory.createDefaultThreadPool(THREAD_NAME_PREFIX);
     }
 
     @Override

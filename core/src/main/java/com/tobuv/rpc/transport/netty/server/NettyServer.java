@@ -1,6 +1,7 @@
 package com.tobuv.rpc.transport.netty.server;
 
 
+import com.tobuv.rpc.hook.ShutdownHook;
 import com.tobuv.rpc.provider.ServiceProvider;
 import com.tobuv.rpc.provider.ServiceProviderImpl;
 import com.tobuv.rpc.registry.NacosServiceRegistry;
@@ -79,6 +80,7 @@ public class NettyServer implements RpcServer {
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(host, port).sync();
+            ShutdownHook.getShutdownHook().addClearAllHook();
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             logger.error("启动服务器时有错误发生: ", e);

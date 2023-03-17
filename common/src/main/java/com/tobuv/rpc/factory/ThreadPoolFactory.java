@@ -1,4 +1,4 @@
-package com.tobuv.rpc.util;
+package com.tobuv.rpc.factory;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
