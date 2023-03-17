@@ -1,4 +1,4 @@
-package com.tobuv.rpc;
+package com.tobuv.rpc.transport;
 
 import com.tobuv.rpc.serializer.CommonSerializer;
 
@@ -7,7 +7,8 @@ import com.tobuv.rpc.serializer.CommonSerializer;
  */
 public interface RpcServer {
 
-    void start(int port);
+    void start();
     void setSerializer(CommonSerializer serializer);
+    <T> void publishService(Object service, Class<T> serviceClass);
 
 }

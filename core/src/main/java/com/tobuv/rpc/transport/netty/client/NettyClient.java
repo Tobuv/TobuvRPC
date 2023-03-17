@@ -1,21 +1,17 @@
-package com.tobuv.rpc.netty.client;
+package com.tobuv.rpc.transport.netty.client;
 
-import com.tobuv.rpc.RpcClient;
-import com.tobuv.rpc.codec.CommonDecoder;
-import com.tobuv.rpc.codec.CommonEncoder;
+import com.tobuv.rpc.registry.NacosServiceRegistry;
+import com.tobuv.rpc.registry.ServiceRegistry;
+import com.tobuv.rpc.transport.RpcClient;
 import com.tobuv.rpc.entity.RpcRequest;
 import com.tobuv.rpc.entity.RpcResponse;
 import com.tobuv.rpc.enumeration.RpcError;
 import com.tobuv.rpc.exception.RpcException;
 import com.tobuv.rpc.serializer.CommonSerializer;
-import com.tobuv.rpc.serializer.HessianSerializer;
-import com.tobuv.rpc.serializer.JsonSerializer;
-import com.tobuv.rpc.serializer.KryoSerializer;
 import com.tobuv.rpc.util.RpcMessageChecker;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
@@ -31,14 +27,12 @@ public class NettyClient implements RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
-    private String host;
-    private int port;
     private static final Bootstrap bootstrap;
     private CommonSerializer serializer;
+    private final ServiceRegistry serviceRegistry;
 
-    public NettyClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public NettyClient() {
+        this.serviceRegistry = new NacosServiceRegistry();
     }
 
     static {
@@ -51,14 +45,15 @@ public class NettyClient implements RpcClient {
 
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
-        if(serializer == null) {
+        if (serializer == null) {
             logger.error("未设置序列化器");
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
         AtomicReference<Object> result = new AtomicReference<>(null);
         try {
-            Channel channel = ChannelProvider.get(new InetSocketAddress(host, port), serializer);
-            if(channel.isActive()) {
+            InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+            Channel channel = ChannelProvider.get(inetSocketAddress, serializer);
+            if (channel.isActive()) {
                 channel.writeAndFlush(rpcRequest).addListener(future1 -> {
                     if (future1.isSuccess()) {
                         logger.info(String.format("客户端发送消息: %s", rpcRequest.toString()));
@@ -75,7 +70,7 @@ public class NettyClient implements RpcClient {
                 //优雅的关闭
                 ChannelProvider.eventLoopGroup.shutdownGracefully();
 
-            }else {
+            } else {
                 System.exit(0);
             }
 
@@ -84,6 +79,7 @@ public class NettyClient implements RpcClient {
         }
         return result.get();
     }
+
     @Override
     public void setSerializer(CommonSerializer serializer) {
         this.serializer = serializer;

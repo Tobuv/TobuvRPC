@@ -1,19 +1,22 @@
-package com.tobuv.rpc.socket.client;
+package com.tobuv.rpc.transport.socket.client;
 
-import com.tobuv.rpc.RpcClient;
+import com.tobuv.rpc.registry.NacosServiceRegistry;
+import com.tobuv.rpc.registry.ServiceRegistry;
+import com.tobuv.rpc.transport.RpcClient;
 import com.tobuv.rpc.entity.RpcRequest;
 import com.tobuv.rpc.entity.RpcResponse;
 import com.tobuv.rpc.enumeration.ResponseCode;
 import com.tobuv.rpc.enumeration.RpcError;
 import com.tobuv.rpc.exception.RpcException;
 import com.tobuv.rpc.serializer.CommonSerializer;
-import com.tobuv.rpc.socket.util.ObjectReader;
-import com.tobuv.rpc.socket.util.ObjectWriter;
+import com.tobuv.rpc.transport.socket.util.ObjectReader;
+import com.tobuv.rpc.transport.socket.util.ObjectWriter;
 import com.tobuv.rpc.util.RpcMessageChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
@@ -23,13 +26,10 @@ public class SocketClient implements RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketClient.class);
     private CommonSerializer serializer;
+    private final ServiceRegistry serviceRegistry;
 
-    private final String host;
-    private final int port;
-
-    public SocketClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public SocketClient() {
+        this.serviceRegistry = new NacosServiceRegistry();
     }
 
     @Override
@@ -38,7 +38,9 @@ public class SocketClient implements RpcClient {
             logger.error("未设置序列化器");
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
-        try (Socket socket = new Socket(host, port)) {
+        InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+        try (Socket socket = new Socket()) {
+            socket.connect(inetSocketAddress);
             OutputStream outputStream = socket.getOutputStream();
             InputStream inputStream = socket.getInputStream();
             ObjectWriter.writeObject(outputStream, rpcRequest, serializer);

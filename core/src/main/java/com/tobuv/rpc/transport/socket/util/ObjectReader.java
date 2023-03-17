@@ -1,4 +1,4 @@
-package com.tobuv.rpc.socket.util;
+package com.tobuv.rpc.transport.socket.util;
 
 import com.tobuv.rpc.entity.RpcRequest;
 import com.tobuv.rpc.entity.RpcResponse;

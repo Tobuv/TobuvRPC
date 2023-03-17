@@ -1,4 +1,4 @@
-package com.tobuv.rpc.netty.client;
+package com.tobuv.rpc.transport.netty.client;
 
 import com.tobuv.rpc.codec.CommonDecoder;
 import com.tobuv.rpc.codec.CommonEncoder;

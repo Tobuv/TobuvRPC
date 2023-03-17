@@ -1,4 +1,4 @@
-package com.tobuv.rpc;
+package com.tobuv.rpc.transport;
 
 import com.tobuv.rpc.entity.RpcRequest;
 import com.tobuv.rpc.serializer.CommonSerializer;
