@@ -5,7 +5,6 @@ import com.tobuv.rpc.transport.RpcClientProxy;
 import com.tobuv.rpc.api.HelloObject;
 import com.tobuv.rpc.api.HelloService;
 import com.tobuv.rpc.transport.netty.client.NettyClient;
-import com.tobuv.rpc.serializer.ProtobufSerializer;
 
 
 /**

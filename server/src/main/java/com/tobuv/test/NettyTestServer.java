@@ -3,9 +3,6 @@ package com.tobuv.test;
 import com.tobuv.rpc.api.HelloService;
 import com.tobuv.rpc.serializer.CommonSerializer;
 import com.tobuv.rpc.transport.netty.server.NettyServer;
-import com.tobuv.rpc.provider.ServiceProviderImpl;
-import com.tobuv.rpc.registry.ServiceRegistry;
-import com.tobuv.rpc.serializer.ProtobufSerializer;
 
 /**
  * 测试：服务提供者
