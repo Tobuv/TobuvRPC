@@ -1,5 +1,7 @@
 package com.tobuv.rpc.transport.socket.client;
 
+import com.tobuv.rpc.loadbalcancer.LoadBalancer;
+import com.tobuv.rpc.loadbalcancer.RandomLoadBalancer;
 import com.tobuv.rpc.registry.NacosServiceDiscovery;
 import com.tobuv.rpc.registry.NacosServiceRegistry;
 import com.tobuv.rpc.registry.ServiceDiscovery;
@@ -31,11 +33,18 @@ public class SocketClient implements RpcClient {
     private final ServiceDiscovery serviceDiscovery;
 
     public SocketClient() {
-        this(DEFAULT_SERIALIZER);
+        this(DEFAULT_SERIALIZER, new RandomLoadBalancer());
+    }
+    public SocketClient(LoadBalancer loadBalancer) {
+        this(DEFAULT_SERIALIZER, loadBalancer);
     }
 
     public SocketClient(Integer serializer) {
-        this.serviceDiscovery = new NacosServiceDiscovery();
+        this(serializer, new RandomLoadBalancer());
+    }
+
+    public SocketClient(Integer serializer, LoadBalancer loadBalancer) {
+        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
         this.serializer = CommonSerializer.getByCode(serializer);
     }
 

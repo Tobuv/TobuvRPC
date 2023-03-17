@@ -1,28 +1,24 @@
 package com.tobuv.rpc.transport.netty.client;
 
 import com.tobuv.rpc.factory.SingletonFactory;
+import com.tobuv.rpc.loadbalcancer.LoadBalancer;
+import com.tobuv.rpc.loadbalcancer.RandomLoadBalancer;
 import com.tobuv.rpc.registry.NacosServiceDiscovery;
-import com.tobuv.rpc.registry.NacosServiceRegistry;
 import com.tobuv.rpc.registry.ServiceDiscovery;
-import com.tobuv.rpc.registry.ServiceRegistry;
 import com.tobuv.rpc.transport.RpcClient;
 import com.tobuv.rpc.entity.RpcRequest;
 import com.tobuv.rpc.entity.RpcResponse;
 import com.tobuv.rpc.enumeration.RpcError;
 import com.tobuv.rpc.exception.RpcException;
 import com.tobuv.rpc.serializer.CommonSerializer;
-import com.tobuv.rpc.util.RpcMessageChecker;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * NIO方式消费侧客户端类
@@ -37,11 +33,18 @@ public class NettyClient implements RpcClient {
     private final UnprocessedRequests unprocessedRequests;
 
     public NettyClient() {
-        this(DEFAULT_SERIALIZER);
+        this(DEFAULT_SERIALIZER, new RandomLoadBalancer());
+    }
+    public NettyClient(LoadBalancer loadBalancer) {
+        this(DEFAULT_SERIALIZER, loadBalancer);
     }
 
     public NettyClient(Integer serializer) {
-        this.serviceDiscovery = new NacosServiceDiscovery();
+        this(serializer, new RandomLoadBalancer());
+    }
+
+    public NettyClient(Integer serializer, LoadBalancer loadBalancer) {
+        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
         this.serializer = CommonSerializer.getByCode(serializer);
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
     }
