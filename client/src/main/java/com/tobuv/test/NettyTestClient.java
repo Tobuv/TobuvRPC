@@ -1,5 +1,6 @@
 package com.tobuv.test;
 
+import com.tobuv.rpc.api.ByeService;
 import com.tobuv.rpc.serializer.CommonSerializer;
 import com.tobuv.rpc.transport.RpcClientProxy;
 import com.tobuv.rpc.api.HelloObject;
@@ -19,6 +20,9 @@ public class NettyTestClient {
         HelloObject object = new HelloObject(12, "This is a message");
         String res = helloService.hello(object);
         System.out.println(res);
+
+        ByeService byeService = proxy.getProxy(ByeService.class);
+        System.out.println(byeService.bye("Netty"));
     }
 
 }

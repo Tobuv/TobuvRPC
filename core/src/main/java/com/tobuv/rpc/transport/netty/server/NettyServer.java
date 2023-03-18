@@ -6,6 +6,7 @@ import com.tobuv.rpc.provider.ServiceProvider;
 import com.tobuv.rpc.provider.ServiceProviderImpl;
 import com.tobuv.rpc.registry.NacosServiceRegistry;
 import com.tobuv.rpc.registry.ServiceRegistry;
+import com.tobuv.rpc.transport.AbstractRpcServer;
 import com.tobuv.rpc.transport.RpcServer;
 import com.tobuv.rpc.codec.CommonDecoder;
 import com.tobuv.rpc.codec.CommonEncoder;
@@ -29,15 +30,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * NIO方式服务提供侧
  */
-public class NettyServer implements RpcServer {
-
-    private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
-    private final String host;
-    private final int port;
-    //远程注册中心
-    private final ServiceRegistry serviceRegistry;
-    //本地注册服务表
-    private final ServiceProvider serviceProvider;
+public class NettyServer extends AbstractRpcServer {
 
     private final CommonSerializer serializer;
 
@@ -51,17 +44,7 @@ public class NettyServer implements RpcServer {
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
-    }
-
-    @Override
-    public <T> void publishService(T service, Class<T> serviceClass) {
-        if (serializer == null) {
-            logger.error("未设置序列化器");
-            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
-        }
-        serviceProvider.addServiceProvider(service, serviceClass);
-        serviceRegistry.register(serviceClass.getCanonicalName(), new InetSocketAddress(host, port));
-        start();
+        scanServices();
     }
 
     @Override

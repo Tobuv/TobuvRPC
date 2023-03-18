@@ -7,6 +7,7 @@ import com.tobuv.rpc.transport.socket.client.SocketClient;
 import com.tobuv.rpc.util.RpcMessageChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -39,10 +40,10 @@ public class RpcClientProxy implements InvocationHandler {
                 method.getName(), args, method.getParameterTypes(), false);
         RpcResponse rpcResponse = null;
         if (client instanceof NettyClient) {
-            CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>) client.sendRequest(rpcRequest);
             try {
+                CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>) client.sendRequest(rpcRequest);
                 rpcResponse = completableFuture.get();
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (Exception e) {
                 logger.error("方法调用请求发送失败", e);
                 return null;
             }

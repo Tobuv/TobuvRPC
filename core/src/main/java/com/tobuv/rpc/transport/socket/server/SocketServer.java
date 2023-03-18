@@ -4,6 +4,7 @@ import com.tobuv.rpc.hook.ShutdownHook;
 import com.tobuv.rpc.provider.ServiceProvider;
 import com.tobuv.rpc.provider.ServiceProviderImpl;
 import com.tobuv.rpc.registry.NacosServiceRegistry;
+import com.tobuv.rpc.transport.AbstractRpcServer;
 import com.tobuv.rpc.transport.RpcServer;
 import com.tobuv.rpc.enumeration.RpcError;
 import com.tobuv.rpc.exception.RpcException;
@@ -23,14 +24,12 @@ import java.util.concurrent.*;
 /**
  * 远程方法调用的提供者（服务端）
  */
-public class SocketServer implements RpcServer {
+public class SocketServer extends AbstractRpcServer {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
     private final RequestHandler requestHandler = new RequestHandler();
     private final CommonSerializer serializer;
     private final ExecutorService threadPool;;
-    private final String host;
-    private final int port;
     private final ServiceRegistry serviceRegistry;
     private final ServiceProvider serviceProvider;
 
@@ -45,16 +44,7 @@ public class SocketServer implements RpcServer {
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
-    }
-
-    public <T> void publishService(T service, Class<T> serviceClass) {
-        if(serializer == null) {
-            logger.error("未设置序列化器");
-            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
-        }
-        serviceProvider.addServiceProvider(service, serviceClass);
-        serviceRegistry.register(serviceClass.getCanonicalName(), new InetSocketAddress(host, port));
-        start();
+        scanServices();
     }
 
     @Override
