@@ -14,7 +14,7 @@ import com.tobuv.rpc.transport.netty.client.NettyClient;
 public class NettyTestClient {
 
     public static void main(String[] args) {
-        NettyClient nettyClient = new NettyClient(CommonSerializer.PROTOBUF_SERIALIZER);
+        NettyClient nettyClient = new NettyClient();
         RpcClientProxy proxy = new RpcClientProxy(nettyClient);
         HelloService helloService = proxy.getProxy(HelloService.class);
         HelloObject object = new HelloObject(12, "This is a message");

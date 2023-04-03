@@ -1,0 +1,4 @@
+hessian=com.tobuv.rpc.serializer.HessianSerializer
+json=com.tobuv.rpc.serializer.JsonSerializer
+kryo=com.tobuv.rpc.serializer.KryoSerializer
+protobuf=com.tobuv.rpc.serializer.ProtobufSerializer

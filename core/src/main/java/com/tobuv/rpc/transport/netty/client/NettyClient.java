@@ -1,5 +1,6 @@
 package com.tobuv.rpc.transport.netty.client;
 
+import com.tobuv.rpc.extension.ExtensionLoader;
 import com.tobuv.rpc.factory.SingletonFactory;
 import com.tobuv.rpc.loadbalcancer.LoadBalancer;
 import com.tobuv.rpc.loadbalcancer.RandomLoadBalancer;
@@ -45,8 +46,9 @@ public class NettyClient implements RpcClient {
 
     public NettyClient(Integer serializer, LoadBalancer loadBalancer) {
         this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
-        this.serializer = CommonSerializer.getByCode(serializer);
+        this.serializer = ExtensionLoader.getExtensionLoader(CommonSerializer.class).getExtension("kryo");
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
+        logger.info("serializer -----> {}", this.serializer.getClass());
     }
 
     static {

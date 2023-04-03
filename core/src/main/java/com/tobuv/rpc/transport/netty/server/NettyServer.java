@@ -1,6 +1,7 @@
 package com.tobuv.rpc.transport.netty.server;
 
 
+import com.tobuv.rpc.extension.ExtensionLoader;
 import com.tobuv.rpc.hook.ShutdownHook;
 import com.tobuv.rpc.provider.ServiceProvider;
 import com.tobuv.rpc.provider.ServiceProviderImpl;
@@ -10,9 +11,8 @@ import com.tobuv.rpc.transport.AbstractRpcServer;
 import com.tobuv.rpc.transport.RpcServer;
 import com.tobuv.rpc.codec.CommonDecoder;
 import com.tobuv.rpc.codec.CommonEncoder;
-import com.tobuv.rpc.enumeration.RpcError;
-import com.tobuv.rpc.exception.RpcException;
 import com.tobuv.rpc.serializer.CommonSerializer;
+import com.tobuv.rpc.transport.netty.client.NettyClientHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -24,18 +24,23 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
  * NIO方式服务提供侧
  */
 public class NettyServer extends AbstractRpcServer {
-
+    private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
     private final CommonSerializer serializer;
 
     public NettyServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER);
+        this.host = host;
+        this.port = port;
+        serviceRegistry = new NacosServiceRegistry();
+        serviceProvider = new ServiceProviderImpl();
+        this.serializer = ExtensionLoader.getExtensionLoader(CommonSerializer.class).getExtension("kryo");
+        scanServices();
+        logger.info("serializer ------> {}", this.serializer);
     }
 
     public NettyServer(String host, int port, Integer serializer) {

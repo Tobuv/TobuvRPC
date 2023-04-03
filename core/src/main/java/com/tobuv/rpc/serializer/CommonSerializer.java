@@ -1,9 +1,12 @@
 package com.tobuv.rpc.serializer;
 
 
+import com.tobuv.rpc.annotation.SPI;
+
 /**
  * 通用的序列化反序列化接口
  */
+@SPI
 public interface CommonSerializer {
 
     Integer KRYO_SERIALIZER = 0;
